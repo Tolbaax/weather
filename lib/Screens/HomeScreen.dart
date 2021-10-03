@@ -14,12 +14,29 @@ class _HomeScreenState extends State<HomeScreen> {
   WeatherModel? weatherModel;
   ApiHelper apiHelper=ApiHelper();
   String? input;
+  Map<String,String>images=
+  {
+    'sn':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXLoupWIPbipGXnaFqSwIxPNInsRXIOOb7hQ&usqp=CAU',
+    'sl':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXLoupWIPbipGXnaFqSwIxPNInsRXIOOb7hQ&usqp=CAU',
+    'h':'https://c8.alamy.com/comp/MCEDBJ/flakes-and-balls-of-ice-crystals-on-green-grass-after-a-hail-storm-appearing-scenic-in-a-shallow-depth-of-field-landscape-image-MCEDBJ.jpg',
+    't':'https://s.w-x.co/util/image/w/gettyimages-1060120946.jpg?crop=16:9&width=480&format=pjpg&auto=webp&quality=60',
+    'hr':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
+    'ir':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
+    's':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
+
+    'hc':'https://s.w-x.co/util/image/w/gettyimages-1060120946.jpg?crop=16:9&width=480&format=pjpg&auto=webp&quality=60' ,
+    'c': 'https://images.theconversation.com/files/18108/original/rffw88nr-1354076846.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop'
+    ,
+    'lc':'https://p0.pikist.com/photos/399/89/sky-light-cloud-weather-mood-landscape-romantic-mystery-light-spreading.jpg',
+
+  };
   getData()
   {
     apiHelper.getWeatherData(input).then((value)
     {
       setState(() {
         weatherModel = value;
+        getData();
       });
     });
   }
