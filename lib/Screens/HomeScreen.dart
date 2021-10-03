@@ -16,20 +16,44 @@ class _HomeScreenState extends State<HomeScreen> {
   String? input;
   Map<String,String>images=
   {
-    'sn':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXLoupWIPbipGXnaFqSwIxPNInsRXIOOb7hQ&usqp=CAU',
+    'sn':'https://images.pexels.com/photos/209831/pexels-photo-209831.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
     'sl':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXLoupWIPbipGXnaFqSwIxPNInsRXIOOb7hQ&usqp=CAU',
     'h':'https://c8.alamy.com/comp/MCEDBJ/flakes-and-balls-of-ice-crystals-on-green-grass-after-a-hail-storm-appearing-scenic-in-a-shallow-depth-of-field-landscape-image-MCEDBJ.jpg',
     't':'https://s.w-x.co/util/image/w/gettyimages-1060120946.jpg?crop=16:9&width=480&format=pjpg&auto=webp&quality=60',
     'hr':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
-    'ir':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
+    'ir':'https://s.w-x.co/util/image/w/gettyimages-1060120946.jpg?crop=16:9&width=480&format=pjpg&auto=webp&quality=60',
     's':'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg',
-
-    'hc':'https://s.w-x.co/util/image/w/gettyimages-1060120946.jpg?crop=16:9&width=480&format=pjpg&auto=webp&quality=60' ,
-    'c': 'https://images.theconversation.com/files/18108/original/rffw88nr-1354076846.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop'
-    ,
+    'hc':'https://images.pexels.com/photos/209831/pexels-photo-209831.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' ,
+    'c': 'https://images.theconversation.com/files/18108/original/rffw88nr-1354076846.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop',
     'lc':'https://p0.pikist.com/photos/399/89/sky-light-cloud-weather-mood-landscape-romantic-mystery-light-spreading.jpg',
-
   };
+  String? imagePath;
+  bool? exsist=false;
+  String? bgImage;
+  imagesMethod()
+  {
+    var e  = images.entries.toList();
+    if(weatherModel!=null)
+      {
+        for(int i=0;i<images.length;i++)
+          {
+            if(e[i].key==weatherModel!.icon)
+              {
+                setState(() {
+                  imagePath=e[i].value;
+                  exsist=true;
+                });
+                break;
+              }
+            else{
+              setState(() {
+                exsist=false;
+              });
+            }
+          }
+      }
+    return exsist;
+  }
   getData()
   {
     apiHelper.getWeatherData(input).then((value)
@@ -46,7 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(fit: BoxFit.cover,
-            image: NetworkImage('https://images.theconversation.com/files/18108/original/rffw88nr-1354076846.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop')
+            image: NetworkImage(weatherModel==null?'https://images.pexels.com/photos/209831/pexels-photo-209831.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+                :imagesMethod()?
+                imagePath!
+                :
+                'https://www.novinite.com/media/images/2020-04/photo_verybig_204200.jpg'
+            ),
           ),
         ),
         child: SafeArea(
