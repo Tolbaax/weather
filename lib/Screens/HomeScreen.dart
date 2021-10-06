@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  WeatherModel? weatherModel;
+  List<WeatherModel>? weatherModel;
   ApiHelper apiHelper=ApiHelper();
   String? input;
   Map<String,String>images=
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         for(int i=0;i<images.length;i++)
           {
-            if(e[i].key==weatherModel!.icon)
+            if(e[i].key==weatherModel![0].icon)
               {
                 setState(() {
                   imagePath=e[i].value;
@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(fit: BoxFit.cover,
@@ -79,48 +80,103 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(Icons.location_city,color: Colors.white,size: 40,)
-                  ],
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height*.1,),
-              SvgPicture.network(weatherModel==null?'https://www.metaweather.com//static/img/weather/c.svg'
-              :'https://www.metaweather.com//static/img/weather/${weatherModel!.icon}.svg',height: 85,
-              ),
-              SizedBox(height: 20,),
-              Text(weatherModel==null?'19'+' °C'
-                :weatherModel!.temp!.toStringAsFixed(1)+' °C'
-                ,style: TextStyle(fontSize: 40,color: Colors.white),),
-              SizedBox(height: 35,),
-              Text(weatherModel==null?'Mansoura'
-                :weatherModel!.cityName!
-                ,style: TextStyle(fontSize: 40,color: Colors.white),),
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(right: 40,left: 40),
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search,color: Colors.white,),
-                    hintText: 'Search City',
-                    hintStyle: TextStyle(color: Colors.black)
+          child: InkWell(
+            onTap: ()
+            {
+              FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                          onTap: ()
+                          {
+                            apiHelper.locationData();
+                          },
+                          child: Icon(Icons.location_city,color: Colors.white,size: 40,))
+                    ],
                   ),
-                  onSubmitted: (city)
-                  {
-                   setState(() {
-                     input=city;
-                   });
-                   getData();
-                  },
                 ),
-              ),
-            ],
+                SizedBox(height: MediaQuery.of(context).size.height*.04,),
+                SvgPicture.network(weatherModel==null?'https://www.metaweather.com//static/img/weather/c.svg'
+                :'https://www.metaweather.com//static/img/weather/${weatherModel![0].icon}.svg',height: 85,
+                ),
+                SizedBox(height: 20,),
+                Text(weatherModel==null?'19'+' °C'
+                  :weatherModel![0].temp!.toStringAsFixed(1)+' °C'
+                  ,style: TextStyle(fontSize: 40,color: Colors.white),),
+                SizedBox(height: 12,),
+                Text(weatherModel==null?'Mansoura'
+                    :weatherModel![0].cityName==null?'Mansoura':
+                     weatherModel![0].cityName!
+                  ,style: TextStyle(fontSize: 40,color: Colors.white),),
+                SizedBox(height: 12,),
+                Container(
+                  height: 280,width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: weatherModel==null?0:
+                      weatherModel!.length,
+                      itemBuilder: (context,index){
+                    return index!=0? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 120,width: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(weatherModel![index].date.toString(),style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600),),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SvgPicture.network(weatherModel==null?'https://www.metaweather.com//static/img/weather/c.svg'
+                                  :'https://www.metaweather.com//static/img/weather/${weatherModel![0].icon}.svg',height: 60,
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            Text(weatherModel![index].stateName.toString(),style: TextStyle(color: Colors.white,fontSize: 18),),
+                            SizedBox(height: 14,),
+                            Text('High: '+weatherModel![index].maxTemp!.toStringAsFixed(2),style: TextStyle(fontSize: 25,color: Colors.white),),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Low: '+weatherModel![index].minTemp!.toStringAsFixed(2),style: TextStyle(fontSize: 25,color: Colors.white)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ):
+                    SizedBox();
+                  }),
+                ),
+                SizedBox(height: 20,),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40,left: 40),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search,color: Colors.white,),
+                      hintText: 'Search City',
+                      hintStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.w600)
+                    ),
+                    onSubmitted: (city)
+                    {
+                     setState(() {
+                       input=city;
+                     });
+                     getData();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
