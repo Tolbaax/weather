@@ -44,7 +44,6 @@ class ApiHelper
       // i got `LocationServiceDisabledException` here
     }
   }
-  // throw exception here
 
 
 }

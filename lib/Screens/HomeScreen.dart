@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       InkWell(
                           onTap: ()
                           {
-                            apiHelper.locationData();
+                             apiHelper.locationData();
                           },
                           child: Icon(Icons.location_city,color: Colors.white,size: 40,))
                     ],
